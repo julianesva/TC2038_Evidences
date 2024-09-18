@@ -33,6 +33,39 @@ A1B21CDEFFEDC12B1A*/
 
 
 
+/*Este codigo enceuntra la subcadena comun mas larga entre dos cadenas.
+Utiliza una matriz(dp) para almacenar las longitudes de las subcadenas comunes
+entre s1 y s2. Si los caracteres coinciden, aumenta la longitud de la subcadena
+,si no, la reinica. La funcion retorna los indices donde comienza y termina la
+subcadena mas larga en s1.
+Time complexity: O(M*N)
+Space complexity: O(M*N)*/
+
+pair<int, int> longuestCommonSubstring(const string& s1, const string& s2) {
+    int n = s1.length();
+    int m = s2.length();
+    int dp[n + 1][m + 1];
+    int mx = 0, end = -1;
+
+    for (int i = 0; i <= n; i++) {
+        for (int j = 0; j <= m; ++j) {
+            if (i == 0 || j == 0) {
+                dp[i][j] = 0;
+            } else if (s1[i - 1] == s2[j - 1]) {
+                dp[i][j] = 1 + dp[i - 1][j - 1];
+                if (mx < dp[i][j]) {
+                    mx = dp[i][j];
+                    end = i - 1;
+                }
+            } else {
+                dp[i][j] = 0;
+            }
+        }
+    }
+    return {end - mx + 1, end};
+}
+
+
 
 int main (){
 
