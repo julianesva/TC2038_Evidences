@@ -41,7 +41,7 @@ subcadena mas larga en s1.
 Time complexity: O(M*N)
 Space complexity: O(M*N)*/
 
-pair<int, int> longuestCommonSubstring(const string& s1, const string& s2) {
+pair<int, int> longestCommonSubstring(const string& s1, const string& s2) {
     int n = s1.length();
     int m = s2.length();
     int dp[n + 1][m + 1];
