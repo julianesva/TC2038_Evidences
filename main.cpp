@@ -105,11 +105,12 @@ int main (){
 
     }
 
-
-
-
-
-
+     // Perform the longest common substring analysis
+    auto [start, end] = LongestCommonSubstring(transmission1, transmission2);
+    cout << "\nLongest common substring between transmission1.txt and transmission2.txt:\n";
+    cout << "Start position in transmission1.txt: " << start << "\n";
+    cout << "End position in transmission1.txt: " << end << "\n";
+    cout << "Length: " << end - start + 1 << " characters\n";
 
 
     return 0; 
