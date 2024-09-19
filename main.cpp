@@ -31,39 +31,60 @@ Larger -> 45E6D9F8C7B6A9A6B7C8F9D6E54
 12345FF54321
 A1B21CDEFFEDC12B1A*/
 
+void LPScreate(const string& virus, vector<int>& lps){
+    // Step 1: Build the LPS (Longest Prefix Suffix) array
+        int prevLPS = 0;  // Length of the previous longest prefix suffix
+        int i = 1;        // Current index in pattern
 
-
-/*Este codigo enceuntra la subcadena comun mas larga entre dos cadenas.
-Utiliza una matriz(dp) para almacenar las longitudes de las subcadenas comunes
-entre s1 y s2. Si los caracteres coinciden, aumenta la longitud de la subcadena
-,si no, la reinica. La funcion retorna los indices donde comienza y termina la
-subcadena mas larga en s1.
-Time complexity: O(M*N)
-Space complexity: O(M*N)*/
-
-pair<int, int> longestCommonSubstring(const string& s1, const string& s2) {
-    int n = s1.length();
-    int m = s2.length();
-    int dp[n + 1][m + 1];
-    int mx = 0, end = -1;
-
-    for (int i = 0; i <= n; i++) {
-        for (int j = 0; j <= m; ++j) {
-            if (i == 0 || j == 0) {
-                dp[i][j] = 0;
-            } else if (s1[i - 1] == s2[j - 1]) {
-                dp[i][j] = 1 + dp[i - 1][j - 1];
-                if (mx < dp[i][j]) {
-                    mx = dp[i][j];
-                    end = i - 1;
-                }
+        while (i < virus.size()) {
+            if (virus[i] == virus[prevLPS]) {
+                lps[i] = prevLPS + 1;
+                prevLPS++;
+                i++;
             } else {
-                dp[i][j] = 0;
+                if (prevLPS == 0) {
+                    lps[i] = 0;
+                    i++;
+                } else {
+                    prevLPS = lps[prevLPS - 1];
+                }
             }
         }
-    }
-    return {end - mx + 1, end};
 }
+
+int KMPsearch(const std::string &transmissions, const std::string &virus) {
+        if (virus.empty()) {
+            return 0;
+        }
+
+        std::vector<int> lps(virus.size(), 0);
+        LPScreate(virus, lps);//We create the LPS array in order to know how many comparissions we can avoid.
+
+        // Step 2: Perform KMP search
+        int i = 0;  // Pointer for text
+        int j = 0;  // Pointer for pattern
+
+        while (i < transmissions.size()) {
+            if (transmissions[i] == virus[j]) {
+                i++;
+                j++;
+            } else {
+                if (j == 0) {
+                    i++;
+                } else {
+                    j = lps[j - 1];
+                }
+            }
+
+            // If we have matched the entire pattern
+            if (j == virus.size()) {
+                return i - virus.size();  // Found the match, return the starting index
+            }
+        }
+
+        return -1;  // No match found
+    }
+
 
 
 
@@ -79,10 +100,13 @@ int main (){
 
     vector<string> filenames = {"mcode1.txt","mcode2.txt","mcode3.txt","transmission1.txt","transmission2.txt"};
     vector<string> filestosave = {virus1, virus2, virus3, transmission1, transmission2};
+    vector<string> virus;
+    vector<string> transmissions;
 
     int files_size = filenames.size();
 
     for(int i = 0; i < files_size; i++){
+        
         
         string filepath = directory + filenames[i];
         std::ifstream file(filepath);  // Open the file
@@ -105,13 +129,28 @@ int main (){
 
     }
 
-     // Perform the longest common substring analysis
-    auto [start, end] = LongestCommonSubstring(transmission1, transmission2);
-    cout << "\nLongest common substring between transmission1.txt and transmission2.txt:\n";
-    cout << "Start position in transmission1.txt: " << start << "\n";
-    cout << "End position in transmission1.txt: " << end << "\n";
-    cout << "Length: " << end - start + 1 << " characters\n";
+    for (int i = 0; i < filestosave.size() ; i++){
 
+        if (filenames[i].find("mcode") != string::npos){
+            virus.push_back(filestosave[i]);
+        }
+        else{
+            transmissions.push_back(filestosave[i]);
+        }
+    }
+
+    int sizev= virus.size();
+    int sizet = transmissions.size();
+
+    for (int i = 0; i < sizet ; i++){
+        for (int j = 0; j < sizev ; j++){
+            int substrpos = KMPsearch(transmissions[i], virus[j]);
+            if (substrpos != -1){
+                cout<< "TRUE : The transmission"<< i+1 << " contains the substring mcode" << j+1 << endl;
+            }
+            else{cout<< "FALSE : The transmission"<< i+1 << " don't contains the substring mcode" << j+1 << endl;}
+        }
+    }
 
     return 0; 
 }
