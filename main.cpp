@@ -145,13 +145,11 @@ int KMPsearch(const std::string &transmissions, const std::string &virus) {
 
 
 
-    /*Este codigo enceuntra la subcadena comun mas larga entre dos cadenas.
-Utiliza una matriz(dp) para almacenar las longitudes de las subcadenas comunes
-entre s1 y s2. Si los caracteres coinciden, aumenta la longitud de la subcadena
-,si no, la reinica. La funcion retorna los indices donde comienza y termina la
-subcadena mas larga en s1.
-Time complexity: O(M*N)
-Space complexity: O(M*N)*/
+    /*La función longestCommonSubstring encuentra el substring más largo que es común entre dos cadenas,
+ s1 y s2, utilizando una matriz de programación dinámica. Compara cada par de caracteres de las dos cadenas y 
+ actualiza una tabla para almacenar las longitudes de los substrings comunes más largos terminados en cada posición. 
+ La función tiene una complejidad temporal y espacial de O(m * n), donde m y n son las longitudes de s1 y s2, respectivamente. 
+ El resultado es el substring más largo común que se extrae de s1 usando el índice final almacenado.*/
 
 string longestCommonSubstring(const string& s1, const string& s2) {
     int m = s1.size();
