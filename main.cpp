@@ -75,6 +75,7 @@ int KMPsearch(const std::string &transmissions, const std::string &virus) {
                     j = lps[j - 1];
                 }
             }
+            
 
             // If we have matched the entire pattern
             if (j == virus.size()) {
