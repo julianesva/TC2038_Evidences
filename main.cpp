@@ -89,41 +89,33 @@ int KMPsearch(const std::string &transmissions, const std::string &virus) {
 
 
 
+/*La función longestCommonSubstring encuentra el substring más largo que es común entre dos cadenas,
+ s1 y s2, utilizando una matriz de programación dinámica. Compara cada par de caracteres de las dos cadenas y 
+ actualiza una tabla para almacenar las longitudes de los substrings comunes más largos terminados en cada posición. 
+ La función tiene una complejidad temporal y espacial de O(m * n), donde m y n son las longitudes de s1 y s2, respectivamente. 
+ El resultado es el substring más largo común que se extrae de s1 usando el índice final almacenado.*/
 
-    /*Este codigo enceuntra la subcadena comun mas larga entre dos cadenas.
-Utiliza una matriz(dp) para almacenar las longitudes de las subcadenas comunes
-entre s1 y s2. Si los caracteres coinciden, aumenta la longitud de la subcadena
-,si no, la reinica. La funcion retorna los indices donde comienza y termina la
-subcadena mas larga en s1.
-Time complexity: O(M*N)
-Space complexity: O(M*N)*/
+string longestCommonSubstring(const string& s1, const string& s2) {
+    int m = s1.size();
+    int n = s2.size();
+    vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
+    int maxLength = 0;
+    int endIndexS1 = 0;
 
-pair<int, int> LongestCommonSubstring(const string& s1, const string& s2) {
-    int n = s1.length();
-    int m = s2.length();
-    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
-    int mx = 0;
-    int end = -1; 
-    
-    for (int i = 1; i <= n; i++) {
-        for (int j = 1; j <= m; j++) {
+    for (int i = 1; i <= m; i++) {
+        for (int j = 1; j <= n; j++) {
             if (s1[i - 1] == s2[j - 1]) {
                 dp[i][j] = dp[i - 1][j - 1] + 1;
-                if (dp[i][j] > mx) {
-                    mx = dp[i][j];
-                    end = i - 1;  
+                if (dp[i][j] > maxLength) {
+                    maxLength = dp[i][j];
+                    endIndexS1 = i;
                 }
             }
         }
     }
-    
-    if (mx > 0) {
-        return {end - mx + 1, end};
-    }
-    
-    return {-1, -1};
-}
 
+    return s1.substr(endIndexS1 - maxLength, maxLength);
+}
 int main (){
 
     string virus1;
@@ -188,16 +180,12 @@ int main (){
         }
     }
 
-    auto [start, end] = LongestCommonSubstring(transmission1, transmission2);
-    if (start != -1 && end != -1) {
-        cout << "\nLongest common substring between transmission1.txt and transmission2.txt:\n";
-        cout << "Start position in transmission1.txt: " << start << "\n";
-        cout << "End position in transmission1.txt: " << end << "\n";
-        cout << "Length: " << end - start + 1 << " characters\n";
-        cout << "Longest common substring: " << transmission1.substr(start, end - start + 1) << "\n";
-    } else {
-        cout << "No common substring found between the two transmissions.\n";
-    }
+     string commonSubstring = longestCommonSubstring(transmissions[0], transmissions[1]);
+    int pos1 = transmissions[0].find(commonSubstring) + 1;
+    int pos2 = pos1 + commonSubstring.size() - 1;
+
+    cout << "The longest common substring between transmission1 and transmission2 is: " << commonSubstring << endl;
+    cout << "InitialPosition to FinalPosition: " << pos1 << " to " << pos2 << endl;
 
     return 0;
 }
