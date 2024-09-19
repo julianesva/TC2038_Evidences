@@ -101,27 +101,28 @@ Space complexity: O(M*N)*/
 pair<int, int> LongestCommonSubstring(const string& s1, const string& s2) {
     int n = s1.length();
     int m = s2.length();
-    int dp[n + 1][m + 1];
-    int mx = 0, end = -1;
-
-    for (int i = 0; i <= n; i++) {
-        for (int j = 0; j <= m; ++j) {
-            if (i == 0 || j == 0) {
-                dp[i][j] = 0;
-            } else if (s1[i - 1] == s2[j - 1]) {
-                dp[i][j] = 1 + dp[i - 1][j - 1];
-                if (mx < dp[i][j]) {
+    vector<vector<int>> dp(n + 1, vector<int>(m + 1, 0));
+    int mx = 0;
+    int end = -1; 
+    
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            if (s1[i - 1] == s2[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1] + 1;
+                if (dp[i][j] > mx) {
                     mx = dp[i][j];
-                    end = i - 1;
+                    end = i - 1;  
                 }
-            } else {
-                dp[i][j] = 0;
             }
         }
     }
-    return {end - mx + 1, end};
+    
+    if (mx > 0) {
+        return {end - mx + 1, end};
+    }
+    
+    return {-1, -1};
 }
-
 
 int main (){
 
