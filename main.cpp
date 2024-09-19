@@ -4,32 +4,33 @@
 #include<string>
 #include<vector>
 
+
 using namespace std;
 
-//mcode1 and mcode 3 in transmission 1.
-//mcode2 and mcode 1 in transmission 2.
+//mcode1 and mcode3 in transmission 1.
+//mcode2 and mcode1 in transmission 2.
 
 
 //mcode1 
 /*The palindromes are:
-
 Larger -> 99C8B65E4F3A1A3F4E56B8C99
 5A1F0B343B0F1A5
 2F454F2*/
 
 //mcode2 
 /*The palindromes are:
-
 A1B2C3D4E556E4D3C2B1A
 78F1E23F4F32E1F87
 Larger -> 9B00E7A1C2F12FF21F2C1A7E00B9*/
 
 //mcode3 
 /*The palindromes are:
-
 Larger -> 45E6D9F8C7B6A9A6B7C8F9D6E54
+
 12345FF54321
 A1B21CDEFFEDC12B1A*/
+
+
 
 void LPScreate(const string& virus, vector<int>& lps){
     // Step 1: Build the LPS (Longest Prefix Suffix) array
@@ -88,8 +89,63 @@ int KMPsearch(const std::string &transmissions, const std::string &virus) {
 
 
 
+    //Longest Palindrome Substring Function.
+    pair<int, int> longestPalindrome(const string& s) {
+    int n = s.length();
+    if (n == 0) return {0, 0};  // Handle empty string case
 
-/*La función longestCommonSubstring encuentra el substring más largo que es común entre dos cadenas,
+    vector<char> newStr(2 * n + 1);
+    int i = 0;
+    newStr[i++] = '#';
+    for (char c : s) {
+        newStr[i++] = c;
+        newStr[i++] = '#';
+    }
+
+    vector<int> p(2 * n + 1, 0);
+    int center = 0, right = 0;
+
+    int longestLength = 0, longestCenter = 0;
+
+    for (i = 0; i < newStr.size(); i++) {
+        int mirror = 2 * center - i;
+
+        if (right > i) {
+            p[i] = min(p[mirror], right - i);
+        }
+
+        int a = i + (p[i] + 1);
+        int b = i - (p[i] + 1);
+
+        while (b >= 0 && a < newStr.size() && newStr[a] == newStr[b]) {
+            p[i]++;
+            a++;
+            b--;
+        }
+
+        if (p[i] >= longestLength) {
+            longestCenter = i;
+            longestLength = p[i];
+        }
+
+        if (i + p[i] > right) {
+            center = i;
+            right = i + p[i];
+        }
+    }
+
+    int start = (longestCenter - longestLength) / 2;
+    int end = (longestCenter + longestLength) / 2 - 1;
+
+    return {start, end};
+}
+
+
+
+
+
+
+    /*La función longestCommonSubstring encuentra el substring más largo que es común entre dos cadenas,
  s1 y s2, utilizando una matriz de programación dinámica. Compara cada par de caracteres de las dos cadenas y 
  actualiza una tabla para almacenar las longitudes de los substrings comunes más largos terminados en cada posición. 
  La función tiene una complejidad temporal y espacial de O(m * n), donde m y n son las longitudes de s1 y s2, respectivamente. 
@@ -116,6 +172,7 @@ string longestCommonSubstring(const string& s1, const string& s2) {
 
     return s1.substr(endIndexS1 - maxLength, maxLength);
 }
+
 int main (){
 
     string virus1;
@@ -170,6 +227,7 @@ int main (){
     int sizev= virus.size();
     int sizet = transmissions.size();
 
+    cout<<"=================================FIRST PART KMP================================="<<endl;
     for (int i = 0; i < sizet ; i++){
         for (int j = 0; j < sizev ; j++){
             int substrpos = KMPsearch(transmissions[i], virus[j]);
@@ -180,12 +238,20 @@ int main (){
         }
     }
 
-     string commonSubstring = longestCommonSubstring(transmissions[0], transmissions[1]);
+    cout<<"=================================SECOND PART MANACHER================================="<<endl;
+    for (int i = 0; i < sizet ; i++){
+        pair<int, int> result = longestPalindrome(transmissions[i]);
+        cout << "Longest Palindromic Substring of transmission"<< i + 1 << " starts at index " << result.first + 1
+            << " and ends at index " << result.second + 1<< endl;
+    }
+
+    cout<<"=================================THIRD PART LCS================================="<<endl;
+    // Perform the longest common substring analysis
+    string commonSubstring = longestCommonSubstring(transmissions[0], transmissions[1]);
     int pos1 = transmissions[0].find(commonSubstring) + 1;
     int pos2 = pos1 + commonSubstring.size() - 1;
-
     cout << "The longest common substring between transmission1 and transmission2 is: " << commonSubstring << endl;
     cout << "InitialPosition to FinalPosition: " << pos1 << " to " << pos2 << endl;
 
-    return 0;
+    return 0; 
 }
